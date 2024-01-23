@@ -1,63 +1,232 @@
-const body = document.body
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Portfolio" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://kit.fontawesome.com/fa62c117c7.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="styles.css" />
+    <title>Raj Shekhar</title>
+  </head>
+  <body class="light" id="top">
+    <header class="header center">
+      <h3>
+        <a href="https://rajshekhar26.github.io/cleanfolio-minimal" class="link"
+          >RS.</a
+        >
+      </h3>
 
-const btnTheme = document.querySelector('.fa-moon')
-const btnHamburger = document.querySelector('.fa-bars')
+      <nav class="nav center">
+        <ul class="nav__list center">
+          <li class="nav__list-item">
+            <a class="link link--nav" href="#projects">Projects</a>
+          </li>
+          <li class="nav__list-item">
+            <a class="link link--nav" href="#skills">Skills</a>
+          </li>
+          <li class="nav__list-item">
+            <a class="link link--nav" href="#contact">Contact</a>
+          </li>
+        </ul>
 
-const addThemeClass = (bodyClass, btnClass) => {
-  body.classList.add(bodyClass)
-  btnTheme.classList.add(btnClass)
-}
+        <button type="button" aria-label="toggle theme" class="btn btn--icon">
+          <i aria-hidden="true" id="btn-theme" class="fas fa-moon"></i>
+        </button>
 
-const getBodyTheme = localStorage.getItem('portfolio-theme')
-const getBtnTheme = localStorage.getItem('portfolio-btn-theme')
+        <button
+          type="button"
+          aria-label="toggle navigation"
+          class="btn btn--icon nav__hamburger"
+        >
+          <i aria-hidden="true" class="fas fa-bars"></i>
+        </button>
+      </nav>
+    </header>
 
-addThemeClass(getBodyTheme, getBtnTheme)
+    <main>
+      <!-- About -->
+      <div class="about center">
+        <h1>Hi, I am <span class="about__name">Raj Shekhar.</span></h1>
+        <h2 class="about__role">A Front end Developer.</h2>
+        <p class="about__desc">
+          Consectetur neque sed quam molestiae consectetur nesciunt sit alias
+          Vitae libero perferendis reprehenderit optio veritatis Accusantium at
+          voluptatum cumque temporibus et Explicabo iste porro quis numquam
+          distinctio Repellendus adipisci nam perferendis amet eaque hic
+          Voluptates
+        </p>
 
-const isDark = () => body.classList.contains('dark')
+        <div class="about__contact center">
+          <a href="https://example.com">
+            <span class="btn btn--outline">Resume</span>
+          </a>
 
-const setTheme = (bodyClass, btnClass) => {
+          <a
+            href="https://github.com/rajshekhar26"
+            aria-label="github"
+            class="link link--icon"
+          >
+            <i aria-hidden="true" class="fab fa-github"></i>
+          </a>
 
-	body.classList.remove(localStorage.getItem('portfolio-theme'))
-	btnTheme.classList.remove(localStorage.getItem('portfolio-btn-theme'))
+          <a
+            href="https://linkedin.com/in/rajshekhar26"
+            aria-label="linkedin"
+            class="link link--icon"
+          >
+            <i aria-hidden="true" class="fab fa-linkedin"></i>
+          </a>
+        </div>
+      </div>
 
-  addThemeClass(bodyClass, btnClass)
+      <!-- Projects -->
+      <section id="projects" class="section projects">
+        <h2 class="section__title">Projects</h2>
 
-	localStorage.setItem('portfolio-theme', bodyClass)
-	localStorage.setItem('portfolio-btn-theme', btnClass)
-}
+        <div class="projects__grid">
+          <div class="project">
+            <h3>Project 1</h3>
+            <p class="project__description">
+              Ipsum accusamus ea excepturi aliquid eligendi amet. Explicabo
+              sapiente debitis labore sed ipsam Mollitia repellat illum quod
+              unde beatae Quis
+            </p>
+            <ul class="project__stack">
+              <li class="project__stack-item">SASS</li>
+              <li class="project__stack-item">TypeScript</li>
+              <li class="project__stack-item">React</li>
+            </ul>
 
-const toggleTheme = () =>
-	isDark() ? setTheme('light', 'fa-moon') : setTheme('dark', 'fa-sun')
+            <a
+              href="https://github.com"
+              aria-label="source code"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fab fa-github"></i>
+            </a>
+            <a
+              href="https://example.com"
+              aria-label="live preview"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
 
-btnTheme.addEventListener('click', toggleTheme)
+          <div class="project">
+            <h3>Project 2</h3>
+            <p class="project__description">
+              Ipsum accusamus ea excepturi aliquid eligendi amet. Explicabo
+              sapiente debitis labore sed ipsam Mollitia repellat illum quod
+              unde beatae Quis
+            </p>
+            <ul class="project__stack">
+              <li class="project__stack-item">SASS</li>
+              <li class="project__stack-item">TypeScript</li>
+              <li class="project__stack-item">React</li>
+            </ul>
 
-const displayList = () => {
-	const navUl = document.querySelector('.nav__list')
+            <a
+              href="https://github.com"
+              aria-label="source code"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fab fa-github"></i>
+            </a>
+            <a
+              href="https://example.com"
+              aria-label="live preview"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
 
-	if (btnHamburger.classList.contains('fa-bars')) {
-		btnHamburger.classList.remove('fa-bars')
-		btnHamburger.classList.add('fa-times')
-		navUl.classList.add('display-nav-list')
-	} else {
-		btnHamburger.classList.remove('fa-times')
-		btnHamburger.classList.add('fa-bars')
-		navUl.classList.remove('display-nav-list')
-	}
-}
+          <div class="project">
+            <h3>Project 3</h3>
+            <p class="project__description">
+              Ipsum accusamus ea excepturi aliquid eligendi amet. Explicabo
+              sapiente debitis labore sed ipsam Mollitia repellat illum quod
+              unde beatae Quis
+            </p>
+            <ul class="project__stack">
+              <li class="project__stack-item">SASS</li>
+              <li class="project__stack-item">TypeScript</li>
+              <li class="project__stack-item">React</li>
+            </ul>
 
-btnHamburger.addEventListener('click', displayList)
+            <a
+              href="https://github.com"
+              aria-label="source code"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fab fa-github"></i>
+            </a>
+            <a
+              href="https://example.com"
+              aria-label="live preview"
+              class="link link--icon"
+            >
+              <i aria-hidden="true" class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
+        </div>
+      </section>
 
-const scrollUp = () => {
-	const btnScrollTop = document.querySelector('.scroll-top')
+      <!-- Skills -->
+      <section class="section skills" id="skills">
+        <h2 class="section__title">Skills</h2>
+        <ul class="skills__list">
+          <li class="skills__list-item btn btn--plain">HTML</li>
+          <li class="skills__list-item btn btn--plain">CSS</li>
+          <li class="skills__list-item btn btn--plain">SCSS</li>
+          <li class="skills__list-item btn btn--plain">JavaScript</li>
+          <li class="skills__list-item btn btn--plain">TypeScript</li>
+          <li class="skills__list-item btn btn--plain">React</li>
+          <li class="skills__list-item btn btn--plain">Redux</li>
+          <li class="skills__list-item btn btn--plain">Git</li>
+          <li class="skills__list-item btn btn--plain">Material UI</li>
+          <li class="skills__list-item btn btn--plain">Jest</li>
+          <li class="skills__list-item btn btn--plain">Enzyme</li>
+          <li class="skills__list-item btn btn--plain">CI/CD</li>
+        </ul>
+      </section>
 
-	if (
-		body.scrollTop > 500 ||
-		document.documentElement.scrollTop > 500
-	) {
-		btnScrollTop.style.display = 'block'
-	} else {
-		btnScrollTop.style.display = 'none'
-	}
-}
+      <!-- Contact -->
+      <section class="section contact center" id="contact">
+        <h2 class="section__title">Contact</h2>
+        <a href="mailto:rjshekhar.official@gmail.com">
+          <span class="btn btn--outline">Email me</span>
+        </a>
+      </section>
+    </main>
 
-document.addEventListener('scroll', scrollUp)
+    <footer class="footer">
+      <a
+        href="https://github.com/rajshekhar26/cleanfolio-minimal"
+        class="link footer__link"
+      >
+        Created By Raj Shekhar
+      </a>
+    </footer>
+
+    <div class="scroll-container">
+    <div class="scroll-top">
+      <a aria-label="Scroll up" href="#top">
+        <i aria-hidden="true" class="fas fa-arrow-up"></i>
+      </a>
+    </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
