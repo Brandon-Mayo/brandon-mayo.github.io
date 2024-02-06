@@ -28,8 +28,8 @@ body {
 
 .light {
   --clr-bg: #f5e8e2;
-  --clr-bg-alt: #85351e;
-  --clr-fg: #9eb794;
+  --clr-bg-alt: #9eb794;
+  --clr-fg: #85351e;
   --clr-fg-alt: #9eb794;
   --clr-primary: #4f6147;
   --shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
