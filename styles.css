@@ -27,11 +27,11 @@ body {
 }
 
 .light {
-  --clr-bg: #005f73;
+  --clr-bg: #94d2bd;
   --clr-bg-alt: #001219;
-  --clr-fg: #94d2bd;
-  --clr-fg-alt: #94d2bd;
-  --clr-primary: #e9d8a6;
+  --clr-fg: #005f73;
+  --clr-fg-alt: #e9d8a6;
+  --clr-primary: #001219;
   --shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
