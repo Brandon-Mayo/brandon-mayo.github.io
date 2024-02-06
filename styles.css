@@ -27,22 +27,21 @@ body {
 }
 
 .light {
+  --clr-bg: #98a9be;
+  --clr-bg-alt: #005f73;
+  --clr-fg: #9eb794;
+  --clr-fg-alt: #9eb794;
+  --clr-primary: #4f6147;
+  --shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.dark {
   --clr-bg: #001219;
   --clr-bg-alt: #005f73;
   --clr-fg: #94d2bd;
   --clr-fg-alt: #94d2bd;
   --clr-primary: #005f73;
   --shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-}
-
-.dark {
-  --clr-bg: #001219;
-  --clr-bg-alt: #2a2f4c;
-  --clr-fg: #bdbddd;
-  --clr-fg-alt: #cdcdff;
-  --clr-primary: #90a0d9;
-  --shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
-    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
 }
 
 ::-moz-selection {
