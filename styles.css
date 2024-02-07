@@ -32,7 +32,7 @@ body {
   --clr-fg: #4f6147;
   --clr-fg-alt: #85351e;
   --clr-primary: #4f6147;
-  --shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  --shadow: rgba(100, 100, 111, 0.5) 0px 7px 29px 0px;
 }
 
 .dark {
