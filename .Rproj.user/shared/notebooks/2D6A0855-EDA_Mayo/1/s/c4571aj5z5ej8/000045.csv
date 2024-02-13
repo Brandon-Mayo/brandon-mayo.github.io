@@ -1,0 +1,14 @@
+"0","crash %>% 
+  filter(!is.na(injuries), crash_month %in% c(1,12)) %>% 
+  mutate(day_of_week=wday(crash_date, label=T, abbr=T),
+         injuries=factor(injuries, levels=c(""none"",""injuries""), ordered=T)) %>% 
+  group_by(day_of_week, injuries) %>% 
+  summarize(count=n()) %>% 
+  ungroup(injuries) %>% 
+  mutate(rel_freq=count/sum(count)) %>% 
+  ggplot(
+    aes(x=day_of_week,y=rel_freq, fill=injuries)) +
+  geom_bar(stat=""identity"", alpha=.7) +
+  scale_fill_brewer(palette=""Set1"", direction=-1)
+"
+"2","`summarise()` has grouped output by 'day_of_week'. You can override using the `.groups` argument."

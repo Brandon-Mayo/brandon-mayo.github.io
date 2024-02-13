@@ -1,0 +1,6 @@
+"0","ggplot("
+"0","  crash_raw %>% filter(prim_contributory_cause != ""UNABLE TO DETERMINE""),"
+"0","  aes(x=prim_contributory_cause)"
+"0",")+"
+"0","  geom_bar()+"
+"0","  coord_flip()"

@@ -1,3 +1,10 @@
+---
+output:
+  html_document: 
+    fig_width: 4.5
+    fig_height: 3.5
+  pdf_document: default
+---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
@@ -29,7 +36,7 @@ crash <- crash_raw %>%
     injuries = as.factor(if_else(injuries_total > 0, "injuries", "none")),
     report_type = replace(crash_raw$report_type, crash_raw$report_type == "", "Unknown"),
     # choose your variables here (use ?transmute to see what this does)
-    latitude, longitude, crash_date
+    latitude, longitude, crash_date, crash_month, crash_day_of_week, prim_contributory_cause
   )
 ```
 
@@ -59,11 +66,23 @@ ggplot(
   geom_bar()+
   coord_flip()
 ```
+
+```{r}
+crash%>%
+  count(prim_contributory_cause) %>%
+  arrange(desc(n)) %>%
+  mutate(prim_contributory_cause = fct_reorder(prim_contributory_cause, n)) %>% 
+  slice(2:4,6:7) %>%
+  ggplot( aes(y = factor(prim_contributory_cause), x=n, fill=prim_contributory_cause)) +
+  geom_bar(stat="identity") +
+  labs(title="Primary Causes of Crash, top 5", y="") +
+  theme(legend.position = "none")
+```
 The top 5 common factors to a crash are; 1) Failing to yield right of way, 2) Following too closely, 3) Improper overtaking/passing, 4) Failing to reduce speed to avoid crash, 5) driving skills/knowledge/experience.
 
 3. How do crashes vary month by month? Compare crashes by month in 2022 to 2023.
 
-```{r}
+```{r, messages = F}
 
 crash_2022 <- crash_raw %>% filter(as.Date(crash_date) >= as.Date('2022-01-01') & as.Date(crash_date) <= as.Date('2022-12-31'))
 
@@ -80,7 +99,23 @@ ggplot(combined_years, aes(x = crash_month, fill = as.factor(year))) +
        subtitle = "2022 and 2023",
        x="Month",
        y="Number of Crashes",
-       fill="Year") 
+       fill="Year")
+
+q <- crash_raw %>%
+  mutate(
+    crash_year = as.factor(year(crash_date)),
+    month_name = month(crash_month, label = TRUE, abbr = TRUE)
+    ) %>%
+  drop_na(crash_year) %>%
+  filter(crash_year == 2022 | crash_year == 2023) %>%
+  group_by(crash_year, month_name) %>%
+  summarize(n = n()) %>%
+  ggplot(aes(x=month_name, y = n, group=crash_year, color=crash_year)) +
+  geom_line() + geom_point() +
+  ylim(c(0,NA)) +
+  labs(title="Crashes increased slightly in 2023",
+       y="Number of Crashes", x="Month", color="Year")
+q
 ```
 When looking at all the data, both May and October are the two months that have the most crashes. As you can see by looking at these graphs, there seems to be a very similar distribution of crashes throughout the months.
 
@@ -127,4 +162,23 @@ ggplot(combined_conditions %>%
   theme(axis.text.x = element_text(angle = 30, hjust = 1))
 ```
 By looking at these even though we can see the y-axis are set to different scales, the bars that depict when there were no injuries are all at a equal height. Therefore we can then look at the proportions of each graph to determine which condition has the highest probability to have an injury in an accident. Out of these three conditions we can see that Rain has the highest probability, followed by Cloudy or Overcast and then lastly, Snow.
+
+
+# Additional Work
+
+```{r}
+crash %>% 
+  filter(!is.na(injuries), crash_month %in% c(1,12)) %>% 
+  mutate(day_of_week=wday(crash_date, label=T, abbr=T),
+         injuries=factor(injuries, levels=c("none","injuries"), ordered=T)) %>% 
+  group_by(day_of_week, injuries) %>% 
+  summarize(count=n()) %>% 
+  ungroup(injuries) %>% 
+  mutate(rel_freq=count/sum(count)) %>% 
+  ggplot(
+    aes(x=day_of_week,y=rel_freq, fill=injuries)) +
+  geom_bar(stat="identity", alpha=.7) +
+  scale_fill_brewer(palette="Set1", direction=-1)
+```
+
 

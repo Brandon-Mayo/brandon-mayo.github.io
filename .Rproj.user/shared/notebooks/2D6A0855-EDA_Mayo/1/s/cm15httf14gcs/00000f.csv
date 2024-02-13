@@ -1,0 +1,8 @@
+"0","ggplot("
+"0","  crash_raw %>% "
+"0","    filter(weather_condition == ""RAIN"" & (lighting_condition == ""DARKNESS"" | lighting_condition == ""DARKNESS, LIGHTED ROAD"")) %>%"
+"0","    mutate(injuries = if_else(injuries_total > 0, ""injuries"", ""none"")),"
+"0","  aes(x = injuries)"
+"0",") +"
+"0","geom_bar(aes(fill=injuries)) +"
+"0","labs(title = ""Crashes in Rain and Darkenss by Injury Status"")"

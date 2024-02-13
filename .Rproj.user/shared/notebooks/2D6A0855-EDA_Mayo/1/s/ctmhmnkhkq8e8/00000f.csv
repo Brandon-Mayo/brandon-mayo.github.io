@@ -1,0 +1,8 @@
+"0","crash <- crash_raw %>%"
+"0","  arrange(desc(crash_date)) %>%"
+"0","  transmute("
+"0","    injuries = as.factor(if_else(injuries_total > 0, ""injuries"", ""none"")),"
+"0","    report_type = replace(crash_raw$report_type, crash_raw$report_type == """", ""Unknown""),"
+"0","    # choose your variables here (use ?transmute to see what this does)"
+"0","    latitude, longitude, crash_date"
+"0","  )"
