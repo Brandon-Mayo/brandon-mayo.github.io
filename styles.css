@@ -32,7 +32,7 @@ body {
   --clr-fg: #4f6147;
   --clr-fg-alt: #85351e;
   --clr-primary: #4f6147;
-  --shadow: rgba(100, 100, 111, 0.5) 0px 7px 29px 0px;
+  --shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .dark {
@@ -41,7 +41,8 @@ body {
   --clr-fg: #94d2bd;
   --clr-fg-alt: #94d2bd;
   --clr-primary: #005f73;
-  --shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  --shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
 }
 
 ::-moz-selection {
