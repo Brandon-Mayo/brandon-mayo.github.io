@@ -5,10 +5,13 @@
   group_by(day_of_week, injuries) %>% 
   summarize(count=n()) %>% 
   ungroup(injuries) %>% 
-  mutate(rel_freq=count/sum(count)) %>% 
+  mutate(rel_freq=count/sum(count), label_y=1-cumsum(rel_freq)+rel_freq/2) %>% 
   ggplot(
     aes(x=day_of_week,y=rel_freq, fill=injuries)) +
-  geom_bar(stat=""identity"", alpha=.7) +
-  scale_fill_brewer(palette=""Set1"", direction=-1)
+  geom_bar(stat=""identity"", alpha=.8) +
+  scale_fill_brewer(palette=""Set1"", direction=-1) +
+  geom_text(aes(y= label_y, label=percent(rel_freq, accuracy = .01)), color=""White"") +
+  scale_y_continuous(labels=scales::percent) +
+  labs(x=NULL, y=""Relative Frequency"", title=""Percentage of Injuries Relative to Each Day"")
 "
 "2","`summarise()` has grouped output by 'day_of_week'. You can override using the `.groups` argument."

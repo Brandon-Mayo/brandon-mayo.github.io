@@ -1,8 +1,8 @@
 ---
 output:
   html_document: 
-    fig_width: 4.5
-    fig_height: 3.5
+    fig_width: 5
+    fig_height: 3.75
   pdf_document: default
 ---
 ```{r setup, include=FALSE}
@@ -11,6 +11,8 @@ library(tidyverse)
 library(scales)
 library(RSocrata) # for reading in data
 library(lubridate) # for dealing with date-time data
+library(plotly)
+library(dplyr)
 ```
 
 # Background
@@ -58,14 +60,6 @@ One thing I notice is that the outline that forms looks like the city limits of 
 
 2. What are the most common contributing factors to a crash?
 
-```{r}
-ggplot(
-  crash_raw %>% filter(prim_contributory_cause != "UNABLE TO DETERMINE"),
-  aes(x=prim_contributory_cause)
-)+
-  geom_bar()+
-  coord_flip()
-```
 
 ```{r}
 crash%>%
@@ -165,6 +159,7 @@ By looking at these even though we can see the y-axis are set to different scale
 
 
 # Additional Work
+Make it an interactive graph that shows percentage and total number of crashes when you hover over each section!
 
 ```{r}
 crash %>% 
@@ -174,11 +169,19 @@ crash %>%
   group_by(day_of_week, injuries) %>% 
   summarize(count=n()) %>% 
   ungroup(injuries) %>% 
-  mutate(rel_freq=count/sum(count)) %>% 
+  mutate(rel_freq=count/sum(count), label_y=1-cumsum(rel_freq)+rel_freq/2) %>% 
   ggplot(
     aes(x=day_of_week,y=rel_freq, fill=injuries)) +
-  geom_bar(stat="identity", alpha=.7) +
-  scale_fill_brewer(palette="Set1", direction=-1)
+  geom_bar(stat="identity", alpha=.8) +
+  scale_fill_brewer(palette="Set1", direction=-1) +
+  geom_text(aes(y= label_y, label=percent(rel_freq, accuracy = .01)), color="White") +
+  scale_y_continuous(labels=scales::percent) +
+  labs(x=NULL, y="Relative Frequency", title="Percentage of Injuries Relative to Each Day")
 ```
+
+```{r}
+
+```
+
 
 

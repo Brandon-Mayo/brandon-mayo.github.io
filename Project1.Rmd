@@ -1,0 +1,30 @@
+---
+title: "Project 1"
+author: "Brandon Mayo and Sam Burk"
+date: "2024-02-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(scales)
+library(RSocrata)
+library(openintro)
+library(mosaic)
+library(lubridate)
+```
+
+# Data Background
+
+```{r}
+flights <- nycflights
+```
+
+
+# Exploratory Data Analysis
+
+# Questions
+
+1. 
+

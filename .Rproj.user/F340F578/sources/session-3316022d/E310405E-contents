@@ -1,0 +1,139 @@
+---
+title: "Lab 4"
+author: "Brandon Mayo and Grace Flitsch"
+date: "2023-02-24"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(openintro)
+library(mosaic)
+
+```
+
+```{r}
+flights <- nycflights
+```
+
+# EDA
+
+
+### 1.
+
+```{r}
+nyc.sub <- nycflights %>% 
+  select(arr_delay,
+         origin,
+         air_time)
+```
+
+### 2.
+
+```{r, message=F}
+library(GGally)
+
+ggpairs(nyc.sub)
+
+```
+
+Arrival Delay seems to be consistent across the origins. We can see that the Air Time varies depending on the Origin. Arrival Delay has a lot of outliers which makes it difficult to get anything out of the plot. There is almost no correlation between Air Time and Arrival Delay. For the Origin vs Air Time plot the Air Time differs depending on the Origin, which again makes sense because depending on where you depart from depends on your Air Time to other places.
+
+
+### 3. 
+
+The distribution for Arrival Delay is right-tailed with significant outliers. Most of the data falls between 0-500 minutes. The distribution for Air Time is less normally distributed, but is still right-tailed. The data we see is more scattered and seems to depend on the Origin of the flight.
+
+### 4.
+
+```{r}
+summary(nyc.sub)
+```
+
+The key statistic that is missing is the standerd deviation. 
+
+### 5.
+
+#```{r}
+#library(skimr)
+
+#skim(nyc.sub)
+#```
+
+While the data is the same as before, skim also gives us the standard deviation. It also gives us a small histogram at the end of the data. For the character variable it provides more information, such as number of unique character classes. 
+
+### 6.
+
+```{r, message=F, warning=F}
+ggplot(nyc.sub)+
+  geom_histogram(aes(x = air_time)) +
+  facet_wrap(~origin)
+```
+
+
+# Inference
+
+
+### 7.
+
+```{r}
+delay <- nyc.sub %>% 
+  select(arr_delay)
+
+t.test(delay, alternative = "greater", mu=0, conf.level = .99)
+```
+We have a 99% two-sided confidence interval for the mean that is (6.46,7.74). since our P-value (2.2e-16) is very small, we have evidence to reject the null hypothesis that the mean arrival delay is 0. Because we used a large sample t-test, we do not need t oassume that the data is normally distributed. Since our n=32735 is greater than 30, the central limit theorem applies.
+
+
+### 8.
+
+```{r}
+air_t <- nyc.sub %>% 
+  select(air_time)
+
+t.test(air_t, alternative = "two.sided", mu=150, conf.level = .95)
+```
+
+We have a 95% two-sided confidence interval for the mean that is (149.43,151.46). Since our P-value (.3926) is very large, we fail to reject the null hypothesis that the mean is 150. The default for mu=0 which we changed to 150, and the nefault for conf.level is .95 which is what we used. Because we used a large sample t-test, we do not need t oassume that the data is normally distributed. Since our n=32735 is greater than 30, the central limit theorem applies.
+
+
+### 9.
+
+```{r}
+t.test(air_t, alternative = "two.sided", mu=149)
+```
+
+149 is not a value that is in our 95% confidence interval, therefor we already knew it is unlikely to be value of the true mean. This is why our p-value=.005284 is small to reject the null hypothesis. Since we have such a large sample, variations of 1 minute are easily detected, we have high power to detect changes in the mean.
+
+### 10.
+
+```{r}
+df <- nyc.sub %>%
+        filter(origin == "JFK" | origin == "LGA") %>%
+        select(origin, air_time)
+t.test(air_time ~ origin, data = df)
+```
+Yes there seems to be a difference in means between JFK and LGA because we can see our 95% confidence interval is not near 0, (57.94,62.63). Our p-value of 2.2e-16 is very small, this we have evidence to reject the null hypothesis that they have the same mean air time. 
+
+```{r, message=F}
+ggplot(data=df,
+       mapping=aes(x=air_time))+
+  geom_histogram()+
+  facet_wrap(~origin)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
