@@ -1,0 +1,69 @@
+#
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    https://shiny.posit.co/
+#
+
+library(shiny)
+
+mlb23 <- read.csv("mlb23.csv")
+
+ui <- fluidPage(
+  titlePanel(
+    title="MLB Scoring Data"),
+  "This application will create a graph from any two variables choosen, and show the value of r^2. 
+  Along with this you can also choose to show the line of best fit, and the error bands.",
+  sidebarLayout(
+    sidebarPanel( 
+      selectInput("stat1", label="Variable 1", choices=names(mlb23)[-1], selected="runs"),
+      
+      selectInput("stat2", label="Variable 2", choices=names(mlb23)[-1],selected="bat_avg"),
+      
+      checkboxInput("line", label="Show line of best fit"),
+      
+      checkboxInput("error", label="Show error bands")),
+    
+      textOutput("r_squared"),
+    
+    mainPanel(
+      plotOutput("plot")
+    )
+  )
+)
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+    p <- reactive({
+      ggplot(mlb23, aes_string(x=input$stat1, y=input$stat2)) +
+                      geom_point()
+  })
+    
+    output$plot <- renderPlot({
+      if(input$line == F){
+        p()
+      }else{
+        p()+geom_smooth(method="lm", se=input$error)
+      }
+    })
+    
+    output$r_squared <- renderText({
+      if(input$line == F){
+        return()
+      } else {
+        model <- lm(as.formula(paste(input$stat2, "~", input$stat1)), data = mlb23)
+        r_squared <- summary(model)$r.squared
+        paste("R^2:", round(r_squared, 3))
+      }
+    })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+
+
+
+
+

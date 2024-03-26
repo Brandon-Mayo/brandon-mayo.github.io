@@ -1,5 +1,5 @@
 ---
-title: "Project 1"
+title: "Delay Times for Aiports and Carriers. Plan Your Next Trip Best"
 author: "Brandon Mayo and Sam Burk"
 date: "2024-02-13"
 output: html_document
@@ -13,18 +13,209 @@ library(RSocrata)
 library(openintro)
 library(mosaic)
 library(lubridate)
+library(dplyr)
+library(maps)
+library(plotly)
 ```
 
 # Data Background
 
-```{r}
-flights <- nycflights
+```{r, echo=F}
+flights <- read.csv("rawflight.csv")
+
+airports <- read.csv("airports.csv")
+
+clean_ports <- airports %>% 
+  transmute(
+    airport_id, name, state, city
+  ) %>% 
+  mutate(OriginAirportID=airport_id, OriginAirportID=as.numeric(OriginAirportID)) %>% 
+  mutate(DestAirportID=airport_id, DestAirportID=as.numeric(DestAirportID))
+
+clean_flights <- flights %>% 
+  transmute(week_day=wday(DayOfWeek, label=T, abbr=T),
+            Carrier, DepDelay, ArrDelay, OriginAirportID, DestAirportID) %>%
+  mutate(OriginAirportID=as.numeric(OriginAirportID), DestAirportID=as.numeric(DestAirportID))
+
+ave_delays_states <- clean_flights %>%
+  group_by(OriginAirportID) %>%
+  summarize(ave_departure_delay = mean(DepDelay, na.rm = TRUE)) %>%
+  left_join(clean_ports, by = c("OriginAirportID" = "airport_id")) %>%
+  ungroup() %>% 
+  group_by(state) %>%
+  slice_max(ave_departure_delay, n = 2)
+
 ```
+
+
+In an era where time efficiency is paramount for travelers, the choice of airlines and airports plays a crucial role in ensuring a seamless journey. This project embarks on a comprehensive analysis of airport and flight data, aiming to unearth valuable insights that guide travelers towards selecting the best airlines and airports with the lowest average departure delay times. With a focus on enhancing the overall travel experience, this investigation delves into the intricate details of, departure delays, airport efficiency, and airline efficiency to identify the carriers and airport hubs that consistently excel in punctuality.
+
+Understanding that timely departures are integral to traveler satisfaction, this project navigates through a set of data encompassing diverse airlines and airports. By employing data analytics and visualization techniques, we aim to unravel patterns, trends, and key performance indicators that distinguish top-performing airlines and airports. The goal is not only to inform prospective travelers about the most reliable choices but also to empower them with data-driven insights that contribute to informed decision-making when planning their journeys.
 
 
 # Exploratory Data Analysis
 
-# Questions
+## Questions
 
-1. 
 
+```{r dep_arr_delays, echo = FALSE}
+#Chicago airport id's: 13232, 13930
+
+clean_flights %>% 
+  filter(!is.na(DepDelay), !is.na(ArrDelay)) %>% 
+  ggplot() + 
+  geom_density(aes(x = DepDelay, color = "DepDelay"), na.rm = TRUE) +  # Specify color as "DepDelay"
+  geom_density(aes(x = ArrDelay, color = "ArrDelay"), na.rm = TRUE) +  # Specify color as "ArrDelay"
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  labs(
+    title = "Distribution of Departure and Arrival Delays",
+    x = "Delay (minutes)",
+    y = "Density",
+    color = "Delay Type",
+    caption=" Data provided from:
+       https://www.kaggle.com/datasets/tylerx/flights-and-airports-data?resource=download&select=airports.csv
+    Figure 1")+
+  scale_x_continuous(limits = c(-120, 120)) +
+  scale_color_manual(values = c("#66c2a5", "#fc8d62"), labels=c("Arrival", "Delay"))
+```
+
+An important question to consider is what the distribution of arrival and departure delays look like. Do they have similar distributions, or is there a difference between the type of delay? As Figure 1 shows, firstly the departure delay has a much sharper distribution. Both peak at slightly before 0 minutes or exactly on time. Early departures are less early than early arrivals, which makes sense since flights wouldn't leave too early because they have to wait to make sure everyone gets the chance to board. It also would make sense that arrival delays skew a bit more early since airlines probably allow for a certain amount of delay with their scheduled departure and arrival times, so the arrival times peak earlier than departure times.
+
+```{r weekdays, echo=FALSE}
+clean_flights %>% 
+  filter(!is.na(DepDelay), !is.na(ArrDelay)) %>%
+  group_by(week_day) %>% 
+  summarize(avg_dep_delay = mean(DepDelay),
+            avg_arr_delay = mean(ArrDelay)) %>%
+  pivot_longer(cols = c(avg_dep_delay, avg_arr_delay),
+               names_to = "delay_type",
+               values_to = "avg_delay") %>%
+  ggplot(aes(x = week_day, y = avg_delay, fill = delay_type)) + 
+    geom_col(position = "dodge", alpha=.8) +
+    geom_text(position = position_dodge(width = .9), vjust = -0.45, aes(label=round(avg_delay, 2))) +
+  labs(
+    title = "Average Delay on Days of the Week",
+    x = "Day",
+    y = "",
+    fill = "Delay Type",
+    caption=" Data provided from:
+       https://www.kaggle.com/datasets/tylerx/flights-and-airports-data?resource=download&select=airports.csv
+    Figure 2") +
+  scale_fill_manual(values=c("#66c2a5", "#fc8d62"),labels=c("Arrival Delay", "Departure Delay"))
+```
+
+We also wanted to see if there were any specific week days that had higher average delay times than others. In order to understand and answer this question we created Figure 2. By looking at this figure, we can clearly see the differences between each day. In the green we have the delays for flights arriving at the airports, while the orange bars are displaying the delays for flights leaving airports. While the delays for departing from airports can be more helpful, and knowledgeable for planning trips, the arrival delays can still inform us.
+Looking at this graph we were shocked to see that the two days that have the highest average departure delay times are Wednesday and Thursday, while the lowest time is Friday. Being someone who travels quite frequently, we have always had the understanding that you are more likely to have delays by flying on Fridays and saturdays. However through this figure we can see that that is not the case, and they are actually two of the top three best days to fly out on.  
+
+
+```{r, echo=F}
+
+ave_delays_carrier <- clean_flights %>%
+  group_by(Carrier) %>%
+  summarize(ave_departure_delay = mean(DepDelay, na.rm = TRUE)) %>% 
+  arrange(desc(ave_departure_delay)) %>%
+  mutate(Carrier = factor(Carrier, levels = Carrier))
+
+ggplot(ave_delays_carrier,
+       aes(x=Carrier, y=ave_departure_delay, fill=Carrier))+
+  geom_bar(stat="identity", alpha=.8) +
+  scale_fill_manual(values=c("#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62")) +
+  geom_text(aes(label=sprintf("%.2f", ave_departure_delay))) +
+  labs(title = "Average Departure Delay Over Different Airline",
+       subtitle = "All Airports",
+       y = "",
+       caption=" Data provided from:
+       https://www.kaggle.com/datasets/tylerx/flights-and-airports-data?resource=download&select=airports.csv
+       Figure 3") +
+  theme(legend.position = "none")
+```
+
+
+```{r, echo=F}
+chicago_land_airports <- clean_flights %>%
+  filter(OriginAirportID %in% c("13232", "13930"))
+
+ave_delays_carrier_chicago <- chicago_land_airports %>%
+  group_by(Carrier) %>%
+  summarize(ave_departure_delay = mean(DepDelay, na.rm = TRUE)) %>% 
+  arrange(desc(ave_departure_delay)) %>%
+  mutate(Carrier = factor(Carrier, levels = Carrier))
+
+ggplot(ave_delays_carrier_chicago,
+       aes(x=Carrier, y=ave_departure_delay, fill=Carrier))+
+  geom_bar(stat="identity", alpha=.8) +
+  scale_fill_manual(values=c("#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5")) +
+  geom_text(aes(label=sprintf("%.2f", ave_departure_delay))) +
+  labs(title = "Average Departure Delay Over Different Airline",
+       subtitle = "Airports Midway and O'Hare",
+       y="",
+       caption=" Data provided from:
+       https://www.kaggle.com/datasets/tylerx/flights-and-airports-data?resource=download&select=airports.csv
+       Figure 4") +
+  theme(legend.position = "none")
+```
+
+
+One question that we wanted to answer for travelers was, What airlines have the highest average time of departure delay over the entire US? Along with just the Chicago airports since we are students in the Chicago land area and travel through them semi-frequently.
+Figures 3 and 4 give us the insight we need to answer this question. One important thing to recognize first is that while there are 16 airlines in the first graph, which is showing the entire data set. The second graph, which focuses on the Chicago airports, only has 15 airlines. This is simply because Hawaiian Airlines does not fly out of either Chicago airport. Through some simple observation we can see in these two graphs that the airlines do not fall into the same order of average departure delay times. One potential reason for this could be the fact that some airlines have fewer flights than others, which would mean that those delays would have a heavier weight that the airlines that have a lot more flights.  
+
+
+```{r, echo=F}
+ave_delays_ports <- clean_flights %>%
+  group_by(OriginAirportID) %>%  
+  summarize(ave_departure_delay = mean(DepDelay, na.rm = TRUE)) %>% 
+  merge(.,clean_ports, by.x="OriginAirportID", by.y="airport_id") %>% 
+  slice_max(ave_departure_delay, n=10) %>% 
+  mutate(name = reorder(name, -ave_departure_delay))
+
+  ggplot(ave_delays_ports,
+    aes(x=ave_departure_delay, y=factor(name), fill=factor(name)))+
+    geom_bar(stat="identity", alpha=.8)+
+  scale_fill_manual(values=c("#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62", "#66c2a5", "#fc8d62"))+
+    geom_text(aes(label=sprintf("%.2f", ave_departure_delay))) +
+    labs(title = "Average Departure Delay Over Different Airports",
+       subtitle = "Ten Highest Airports",
+       y="Airport",
+       x="",
+       caption=" Data provided from:
+       https://www.kaggle.com/datasets/tylerx/flights-and-airports-data?resource=download&select=airports.csv
+       Figure 5") +
+  theme(legend.position = "none")
+```
+
+
+Another Question that we wanted to look at was simply the top ten airports with the highest average departure delay times. In Figure 5 we can see that out of the 365 different airports that we have data for, these are the ten that have the highest average delay departure times. Being a students at Wheaton College, IL it is very unfortunate to see that the two airports with the highest departure delay times, are the Chicago airports. 
+
+
+
+```{python map, echo = FALSE, warning = FALSE}
+# import pandas as pd
+# import plotly.express as px
+# ports_with_location = pd.read_csv("ports_with_location_copy.csv")
+# fig = px.scatter_geo(
+  # data_frame = ports_with_location, 
+  # lat = "latitude_deg", 
+  # lon = "longitude_deg",
+  # hover_name="name", # column added to hover information
+  # projection="albers usa",
+  # hover_data=["ave_departure_delay", "ave_arrival_delay"], # Data displayed in hover boxes
+  # color = "ave_departure_delay"
+  # )
+
+# Country and state boundaries
+# fig.update_geos(
+    # showcountries=True, countrycolor="Black",
+    # showsubunits=True, subunitcolor="Blue",
+# )
+
+# Custom text in boxes
+# fig.update_traces(hovertemplate='<b>%{hovertext}</b><br>' +
+                                 # 'Average Departure Delay: %{customdata[0]:.2f} min<br>' +
+                                 # 'Average Arrival Delay: %{customdata[1]:.2f} min<br>' +
+                                 # '<extra></extra>')
+
+# fig.update_layout(title_text = "Average Delays at American Airports",
+  # coloraxis_colorbar_title="Average Departure Delay")
+
+# fig.show()
+```

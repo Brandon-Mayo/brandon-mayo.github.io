@@ -1,0 +1,33 @@
+---
+title: "Shiny_Practice"
+author: "Brandon Mayo"
+date: "2024-03-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(shiny)
+library(vroom)
+library(tidyverse)
+```
+
+```{r}
+dir.create("neiss")
+#> Warning in dir.create("neiss"): 'neiss' already exists
+download <- function(name) {
+  url <- "https://github.com/hadley/mastering-shiny/raw/master/neiss/"
+  download.file(paste0(url, name), paste0("neiss/", name), quiet = TRUE)
+}
+download("injuries.tsv.gz")
+download("population.tsv")
+download("products.tsv")
+```
+
+```{r}
+injuries <- vroom::vroom("neiss/injuries.tsv.gz")
+injuries
+```
+
+
+

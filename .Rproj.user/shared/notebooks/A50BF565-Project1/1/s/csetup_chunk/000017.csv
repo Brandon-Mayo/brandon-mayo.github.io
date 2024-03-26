@@ -1,0 +1,20 @@
+"0","knitr::opts_chunk$set(echo = TRUE)"
+"0","library(tidyverse)"
+"0","library(scales)"
+"0","library(RSocrata)"
+"0","library(openintro)"
+"0","library(mosaic)"
+"0","library(lubridate)"
+"0","library(dplyr)"
+"0","library(maps)"
+"2","Warning: package ‘maps’ was built under R version 4.2.3"
+"2","
+Attaching package: ‘maps’
+
+"
+"2","The following object is masked from ‘package:purrr’:
+
+    map
+
+"
+"0","library(plotly)"

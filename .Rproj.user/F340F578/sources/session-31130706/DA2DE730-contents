@@ -1,0 +1,46 @@
+---
+title: "Text Plots Practice"
+author: "Brandon Mayo"
+date: "2024-02-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(worldfootballR)
+library(ggrepel)
+```
+
+
+```{r}
+big5_team_stats_full <- fb_big5_advanced_season_stats(
+  season_end_year= c(2024), 
+  stat_type= "standard", 
+  team_or_player= "team"
+  ) %>% 
+  filter(Team_or_Opponent=="team")
+
+big5 <- big5_team_stats_full %>%
+  filter(Team_or_Opponent=="team") %>% 
+  group_by(Comp) %>% 
+  slice_max(Gls_Per, n=2)
+
+
+  ggplot(big5_team_stats_full,
+         aes(y=Gls_Per, x=xG_Per)) +
+  geom_point(aes(color=Comp)) +
+    geom_abline(intercept = 0, slope = 1, linetype="dashed", color = "black") +
+    scale_color_brewer(palette="Set1") +
+    labs(title = "The best teams in the world soccer outperform their xG",
+         y="Goals Per Game",
+         x="Expected Goals Per Game",
+         color="League",
+         caption="Teams above the dashed line have scored more goals than expected, teams below scored fewer.
+         Data from FBRef") +
+    geom_text_repel(data=big5,
+                    aes(label=Squad),
+                    size=3,
+                    min.segment.length = .15)
+```
+

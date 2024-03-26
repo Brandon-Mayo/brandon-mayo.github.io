@@ -1,0 +1,6 @@
+"0","download(""products.tsv"")
+"
+"2","Warning: cannot open URL 'https://github.com/hadley/mastering-shiny/raw/master/neiss/products.tsv': HTTP status was '404 Not Found'"
+"2","Error in download.file(paste0(url, name), paste0(""neiss/"", name), quiet = TRUE) : 
+  cannot open URL 'https://github.com/hadley/mastering-shiny/raw/master/neiss/products.tsv'
+"

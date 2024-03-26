@@ -1,0 +1,41 @@
+"0","import pandas as pd"
+"2","ModuleNotFoundError: No module named 'pandas'
+"
+"0","import plotly.express as px"
+"2","ModuleNotFoundError: No module named 'plotly'
+"
+"0","ports_with_location = pd.read_csv(""ports_with_location_copy.csv"")"
+"2","NameError: name 'pd' is not defined
+"
+"0","fig = px.scatter_geo("
+"0","  data_frame = ports_with_location, "
+"0","  lat = ""latitude_deg"", "
+"0","  lon = ""longitude_deg"","
+"0","  hover_name=""name"", # column added to hover information"
+"0","  projection=""albers usa"","
+"0","  hover_data=[""ave_departure_delay"", ""ave_arrival_delay""], # Data displayed in hover boxes"
+"0","  color = ""ave_departure_delay"""
+"0","  )"
+"2","NameError: name 'px' is not defined
+"
+"0","# Country and state boundaries"
+"0","fig.update_geos("
+"0","    showcountries=True, countrycolor=""Black"","
+"0","    showsubunits=True, subunitcolor=""Blue"","
+"0",")"
+"2","NameError: name 'fig' is not defined
+"
+"0","# Custom text in boxes"
+"0","fig.update_traces(hovertemplate='<b>%{hovertext}</b><br>' +"
+"0","                                 'Average Departure Delay: %{customdata[0]:.2f} min<br>' +"
+"0","                                 'Average Arrival Delay: %{customdata[1]:.2f} min<br>' +"
+"0","                                 '<extra></extra>')"
+"2","NameError: name 'fig' is not defined
+"
+"0","fig.update_layout(title_text = ""Average Delays at American Airports"","
+"0","  coloraxis_colorbar_title=""Average Departure Delay"")"
+"2","NameError: name 'fig' is not defined
+"
+"0","fig.show()"
+"2","NameError: name 'fig' is not defined
+"
