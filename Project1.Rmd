@@ -2,7 +2,9 @@
 title: "Delay Times for Aiports and Carriers. Plan Your Next Trip Best"
 author: "Brandon Mayo and Sam Burk"
 date: "2024-02-13"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
